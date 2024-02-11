@@ -30,7 +30,7 @@ describe("Deperp", function () {
       const { otherAccount, deperp } = await loadFixture(deployFixtures);
 
       await expect(
-        deperp.approve(otherAccount, ethers.MaxUint256 - 1n)
+        deperp.approve(otherAccount, ethers.MaxUint256 - 1n),
       ).to.be.revertedWith("Deperp::approve: amount exceeds 96 bits");
     });
 
@@ -42,11 +42,11 @@ describe("Deperp", function () {
         .withArgs(owner.address, otherAccount.address, 2n ** 96n - 1n);
 
       await expect(
-        deperp.connect(otherAccount).transferFrom(owner, otherAccount, 100)
+        deperp.connect(otherAccount).transferFrom(owner, otherAccount, 100),
       ).to.not.emit(deperp, "Approval");
 
       expect(await deperp.allowance(owner, otherAccount)).to.equal(
-        2n ** 96n - 1n
+        2n ** 96n - 1n,
       );
     });
   });
@@ -62,7 +62,7 @@ describe("Deperp", function () {
     it("Error: over uint96", async function () {
       const { otherAccount, deperp } = await loadFixture(deployFixtures);
       await expect(
-        deperp.transfer(otherAccount, ethers.MaxUint256 - 1n)
+        deperp.transfer(otherAccount, ethers.MaxUint256 - 1n),
       ).to.be.revertedWith("Deperp::transfer: amount exceeds 96 bits");
     });
   });
@@ -72,7 +72,7 @@ describe("Deperp", function () {
       const { owner, otherAccount, deperp } = await loadFixture(deployFixtures);
       await deperp.approve(otherAccount, 100);
       await expect(
-        deperp.connect(otherAccount).transferFrom(owner, otherAccount, 100)
+        deperp.connect(otherAccount).transferFrom(owner, otherAccount, 100),
       )
         .to.emit(deperp, "Transfer")
         .withArgs(owner.address, otherAccount.address, 100)
@@ -86,7 +86,7 @@ describe("Deperp", function () {
       await expect(
         deperp
           .connect(otherAccount)
-          .transferFrom(owner, otherAccount, ethers.MaxUint256 - 1n)
+          .transferFrom(owner, otherAccount, ethers.MaxUint256 - 1n),
       ).to.be.revertedWith("Deperp::approve: amount exceeds 96 bits");
     });
   });
@@ -95,25 +95,25 @@ describe("Deperp", function () {
     it("Error: from zero address", async function () {
       const { otherAccount, deperp } = await loadFixture(deployFixtures);
       await expect(
-        deperp.transferFrom(ethers.ZeroAddress, otherAccount, 0)
+        deperp.transferFrom(ethers.ZeroAddress, otherAccount, 0),
       ).to.be.revertedWith(
-        "Deperp::_transferTokens: cannot transfer from the zero address"
+        "Deperp::_transferTokens: cannot transfer from the zero address",
       );
     });
 
     it("Error: to zero address", async function () {
       const { deperp } = await loadFixture(deployFixtures);
       await expect(deperp.transfer(ethers.ZeroAddress, 100)).to.be.revertedWith(
-        "Deperp::_transferTokens: cannot transfer to the zero address"
+        "Deperp::_transferTokens: cannot transfer to the zero address",
       );
     });
 
     it("Error: exceeds balance", async function () {
       const { deperp, owner, otherAccount } = await loadFixture(deployFixtures);
       await expect(
-        deperp.connect(otherAccount).transfer(owner, 100)
+        deperp.connect(otherAccount).transfer(owner, 100),
       ).to.be.revertedWith(
-        "Deperp::_transferTokens: transfer amount exceeds balance"
+        "Deperp::_transferTokens: transfer amount exceeds balance",
       );
     });
   });
@@ -126,7 +126,7 @@ describe("Deperp", function () {
         .withArgs(owner.address, ethers.ZeroAddress, owner.address);
       expect(await deperp.delegates(owner)).to.eq(owner.address);
       expect(await deperp.getCurrentVotes(owner)).to.eq(
-        BigInt("100000000") * 10n ** 18n
+        BigInt("100000000") * 10n ** 18n,
       );
     });
 
@@ -135,9 +135,7 @@ describe("Deperp", function () {
         const { deperp, owner } = await loadFixture(deployFixtures);
         const domain = await getTypedDomainDeperp(
           deperp,
-          (
-            await ethers.provider.getNetwork()
-          ).chainId
+          (await ethers.provider.getNetwork()).chainId,
         );
         const delegationTypes = await getDelegationTypes();
 
@@ -157,20 +155,19 @@ describe("Deperp", function () {
             (await time.latest()) + 100,
             v,
             r,
-            s
-          )
+            s,
+          ),
         )
           .to.emit(deperp, "DelegateChanged")
           .withArgs(owner.address, ethers.ZeroAddress, owner.address);
       });
 
       it("Error: invalid nonce", async function () {
-        const { deperp, owner, otherAccount } = await loadFixture(deployFixtures);
+        const { deperp, owner, otherAccount } =
+          await loadFixture(deployFixtures);
         const domain = await getTypedDomainDeperp(
           deperp,
-          (
-            await ethers.provider.getNetwork()
-          ).chainId
+          (await ethers.provider.getNetwork()).chainId,
         );
         const delegationTypes = await getDelegationTypes();
 
@@ -189,7 +186,7 @@ describe("Deperp", function () {
           (await time.latest()) + 100,
           v,
           r,
-          s
+          s,
         );
 
         sig = await owner.signTypedData(domain, delegationTypes, {
@@ -202,7 +199,7 @@ describe("Deperp", function () {
         v = "0x" + sig.substring(130, 132);
 
         await expect(
-          deperp.delegateBySig(otherAccount.address, 2, 0, v, r, s)
+          deperp.delegateBySig(otherAccount.address, 2, 0, v, r, s),
         ).to.be.revertedWith("Deperp::delegateBySig: invalid nonce");
       });
 
@@ -210,9 +207,7 @@ describe("Deperp", function () {
         const { deperp, owner } = await loadFixture(deployFixtures);
         const domain = await getTypedDomainDeperp(
           deperp,
-          (
-            await ethers.provider.getNetwork()
-          ).chainId
+          (await ethers.provider.getNetwork()).chainId,
         );
         const delegationTypes = await getDelegationTypes();
 
@@ -232,8 +227,8 @@ describe("Deperp", function () {
             (await time.latest()) + 100,
             v,
             r,
-            s
-          )
+            s,
+          ),
         ).to.revertedWith("Deperp::delegateBySig: invalid signature");
       });
 
@@ -241,9 +236,7 @@ describe("Deperp", function () {
         const { deperp, owner } = await loadFixture(deployFixtures);
         const domain = await getTypedDomainDeperp(
           deperp,
-          (
-            await ethers.provider.getNetwork()
-          ).chainId
+          (await ethers.provider.getNetwork()).chainId,
         );
         const delegationTypes = await getDelegationTypes();
 
@@ -263,8 +256,8 @@ describe("Deperp", function () {
             (await time.latest()) - 100,
             v,
             r,
-            s
-          )
+            s,
+          ),
         ).to.be.revertedWith("Deperp::delegateBySig: signature expired");
       });
     });
@@ -276,7 +269,9 @@ describe("Deperp", function () {
       expect(await deperp.getCurrentVotes(owner)).to.eq(0);
 
       await deperp.delegate(owner);
-      expect(await deperp.getCurrentVotes(owner)).to.eq(100000000n * 10n ** 18n);
+      expect(await deperp.getCurrentVotes(owner)).to.eq(
+        100000000n * 10n ** 18n,
+      );
     });
   });
 
@@ -294,11 +289,13 @@ describe("Deperp", function () {
       const blockNumber3 = await ethers.provider.getBlockNumber();
       await mine();
 
-      expect(await deperp.getPriorVotes(otherAccount, blockNumber1 - 1)).to.eq(0);
+      expect(await deperp.getPriorVotes(otherAccount, blockNumber1 - 1)).to.eq(
+        0,
+      );
       expect(await deperp.getPriorVotes(otherAccount, blockNumber1)).to.eq(0);
       expect(await deperp.getPriorVotes(otherAccount, blockNumber2)).to.eq(200);
       expect(await deperp.getPriorVotes(otherAccount, blockNumber3 - 1)).to.eq(
-        200
+        200,
       );
       expect(await deperp.getPriorVotes(otherAccount, blockNumber3)).to.eq(400);
     });
@@ -315,7 +312,7 @@ describe("Deperp", function () {
       const blockNumber = await ethers.provider.getBlockNumber();
 
       await expect(deperp.getPriorVotes(owner, blockNumber)).to.be.revertedWith(
-        "Deperp::getPriorVotes: not yet determined"
+        "Deperp::getPriorVotes: not yet determined",
       );
     });
   });
@@ -333,7 +330,7 @@ describe("Deperp", function () {
         .withArgs(
           owner.address,
           100000000n * 10n ** 18n,
-          100000000n * 10n ** 18n - 100n
+          100000000n * 10n ** 18n - 100n,
         );
     });
 
@@ -353,9 +350,7 @@ describe("Deperp", function () {
 
       const domain = await getTypedDomainDeperp(
         deperp,
-        (
-          await ethers.provider.getNetwork()
-        ).chainId
+        (await ethers.provider.getNetwork()).chainId,
       );
       const delegationTypes = await getDelegationTypes();
 
@@ -385,7 +380,7 @@ describe("Deperp", function () {
           expiry,
           v,
           r,
-          s
+          s,
         )
       ).data;
 
@@ -396,7 +391,7 @@ describe("Deperp", function () {
           expiry,
           v2,
           r2,
-          s2
+          s2,
         )
       ).data;
 
