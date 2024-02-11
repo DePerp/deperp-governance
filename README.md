@@ -2,6 +2,9 @@
 # Deperp Governance
 This repository hosts the up to date contracts for the Deperp Protocol governance system.
 
+# Ticker 
+### Deperp
+
 ## Running
 ### Setup
 - `npm install`
