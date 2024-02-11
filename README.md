@@ -1,4 +1,7 @@
 
+[![Coverage Status](https://coveralls.io/repos/github/DePerp/deperp-governance/badge.svg)](https://coveralls.io/github/DePerp/deperp-governance)
+
+
 # Deperp Governance
 This repository hosts the up to date contracts for the Deperp Protocol governance system.
 
